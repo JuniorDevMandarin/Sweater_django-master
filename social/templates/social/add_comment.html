@@ -1,0 +1,21 @@
+{% extends 'social/base.html' %}
+
+{% block content %}
+
+
+<h1>Comment On Blog</h1>
+<form method="post" >
+    {% csrf_token %}
+
+<!--    {{form.as_p|safe}}-->
+    <div class="form-error">{{form.non_field_errors|safe }}</div>
+    {% for f in form %}
+    <p><label class="form-label" for="{{f.id_for_label }}">{{f.label}}: </label> {{ f }}</p>
+    <div class="form-error">{{ f.errors }}</div>
+    {% endfor %}
+    <button type="submit">Add Comment</button>
+</form>
+
+
+
+{% endblock %}

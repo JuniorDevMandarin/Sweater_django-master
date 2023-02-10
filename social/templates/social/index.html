@@ -1,0 +1,42 @@
+{% extends 'social/base.html' %}
+
+{% block content %}
+<h1>{{title}}</h1>
+
+<ul class="list-articles">
+    {% for p in posts %}
+
+    <li>
+        <div class="article-panel">
+            <p class="first">Категория: {{p.cat}}</p>
+            <p class="last">Дата: {{p.time_update|date:"d-m-Y H:i:s"}}</p>
+        </div>
+        {% if p.photo %}
+        <p><img class="img-article-left thumb" src="{{p.photo.url}}"></p>
+        {% endif %}
+
+        <h2>{{p.title}} </h2>
+
+        {% autoescape off %}
+        {{p.content | linebreaks | truncatewords:50 | safe }}
+        {% endautoescape %}
+        <div class="clear"></div>
+        <p class="link-read-post"><a href="{{ p.get_absolute_url }}"> Читать пост</a></p>
+
+        <div class="article-panel">
+            <p class="first">Автор: {{p.author}}
+                {% if request.user.is_authenticated %}
+                    {% if user.id == p.author.id %}
+                        <a href="{% url 'update_post' p.pk %}">Edit</a>  |
+                        <a href="{% url 'delete_post' p.pk %}">Delete</a>
+                    {% endif %}
+                {% endif %}
+            </p>
+        </div>
+        <hr>
+
+    </li>
+    {% endfor %}
+</ul>
+
+{% endblock %}

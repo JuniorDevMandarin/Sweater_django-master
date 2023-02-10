@@ -1,0 +1,164 @@
+{% load static %}
+
+{% load social_tags %}
+<!DOCTYPE html>
+<html>
+<head>
+    <title>{{title}}</title>
+    <link type="text/css" href="{% static 'social/css/styles.css' %}" rel="stylesheet"/>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+    <link rel="shortcut icon" href="{% static 'social/images/main.ico' %}" type="image/x-icon"/>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link type="text/css" rel="stylesheet"
+          href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.8.1/font/bootstrap-icons.css"/>
+    <link type="text/css" rel="stylesheet" href="https://fonts.googleapis.com/css?family=Sansita+Swashed|Oswald"/>
+    <link type="text/css" rel="stylesheet" href="{% static 'styles.css' %}"/>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.2.1/dist/css/bootstrap.min.css" rel="stylesheet"
+          integrity="sha384-iYQeCzEYFbKjA/T2uDLTpkwGzCiq6soy8tYaI1GyVh/UjpbCx/TYkiZhlZB6+fzT" crossorigin="anonymous">
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.4.1/jquery.min.js"></script>
+</head>
+<body>
+<table class="table-page" border=0 cellpadding="0" cellspacing="0">
+    <tr>
+        <td valign=top>
+            {% block mainmenu %}
+            <div class="header">
+                <ul id="mainmenu" class="mainmenu">
+                    <li class="logo"><a href="{% url 'home' %}">
+                        <div class="logo"></div>
+                    </a></li>
+                    {% for m in menu %}
+                    <li><a href="{% url m.url_name %}">{{m.title}}</a></li>
+                    {% endfor %}
+                    {% if request.user.is_authenticated %}
+
+
+                    <li class="nav-item dropdown">
+                        <a class="nav-link dropdown-toggle" href="#" id="navbarDropdown" role="button"
+                           data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                            Profile
+                        </a>
+                        <div class="dropdown-menu" aria-labelledby="navbarDropdown">
+                            <a class="dropdown-item" href="{% url 'edit_profile' %}">Edit Settings</a>
+                            {% if user.profile.id %}
+                            <a class="dropdown-item" href="{% url 'edit_profile_page' user.profile.id %}">Edit Profile Page</a>
+                            <a class="dropdown-item" href="{% url 'show_profile_page' user.profile.id %}">Show Profile Page</a>
+                            {% else %}
+                                <a class="dropdown-item" href="{% url 'create_profile_page' %}">Create Profile Page</a>
+                            {% endif %}
+
+                        </div>
+                    </li>
+
+
+
+                    <li class="last"> {{user.username}} | <a href="{% url 'logout' %}">Выйти</a></li>
+                    {% else %}
+                    <li class="last"><a href="{% url 'register' %}">Регистрация</a> | <a
+                            href="{% url 'login' %}">Войти</a></li>
+                    {% endif %}
+                </ul>
+                <div class="clear"></div>
+            </div>
+            {% endblock mainmenu %}
+
+
+            <table class="table-content" border=0 cellpadding="0" cellspacing="0">
+                <tr>
+                    <!-- Sidebar слева -->
+                    {% load cache %}
+                    <td valign="top" class="left-chapters">
+
+                        <ul id="leftchapters">
+
+                            {% if cat_selected == 0 %}
+                            <li class="selected">Все категории</li>
+                            {% else %}
+                            <li><a href="{% url 'home' %}">Все категории</a></li>
+                            {% endif %}
+                            {% for c in cats %}
+                            {% if c.social__count > 0 %}
+                            {% if c.pk == cat_selected %}
+                            <li class="selected">{{c.name}}</li>
+                            {% else %}
+                            <li><a href="{{ c.get_absolute_url }}">{{c.name}}</a></li>
+                            {% endif %}
+                            {% endif %}
+                            {% endfor %}
+
+                            <li class="share">
+                                <p>Наш канал</p>
+                                <a class="share-yt"
+                                   href="https://www.youtube.com/channel/UClJzWfGWuGJL2t-3dYKcHTA/playlists"
+                                   target="_blank" rel="nofollow"></a>
+                            </li>
+                        </ul>
+                    </td>
+                    <!-- Конец Sidebar'а -->
+                    <td valign="top" class="content">
+                        <!-- Хлебные крошки -->
+                        {% block breadcrumbs %}
+                        {% endblock %}
+
+                        <!-- Блок контента -->
+                        <div class="content-text">
+                            {% block content %}
+                            {% endblock %}
+                            {% if page_obj.has_other_pages %}
+                            <nav class="list-pages">
+                                <ul>
+                                    {% if page_obj.has_previous %}
+                                    <li class="page-num">
+                                        <a href="?page={{ page_obj.previous_page_number }}">&lt;</a>
+                                    </li>
+                                    {% endif %}
+
+                                    {% for p in paginator.page_range %}
+                                    {% if page_obj.number == p %}
+                                    <li class="page-num page-num-selected">{{ p }}</li>
+                                    {% elif p >= page_obj.number|add:-2 and p <= page_obj.number|add:2 %}
+
+                                    <li class="page-num">
+                                        <a href="?page={{ p }}">{{ p }}</a>
+                                    </li>
+                                    {% endif %}
+                                    {% endfor %}
+                                    {% if page_obj.has_next %}
+                                    <li class="page-num">
+                                        <a href="?page={{ page_obj.next_page_number }}">&gt;</a>
+                                    </li>
+                                    {% endif %}
+                                </ul>
+                            </nav>
+                            {% endif %}
+                        </div>
+                        <!-- Конец блока контента -->
+
+                    </td>
+                </tr>
+            </table>
+        </td>
+    </tr>
+    <!-- Footer -->
+    <tr>
+        <td valign=top>
+            <div id="footer">
+                <p>&copy; 2021 Частичное или полное копирование информации с данного сайта для распространения на других
+                    ресурсах, в том числе и бумажных, строго запрещено.</p>
+            </div>
+        </td>
+    </tr>
+</table>
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.2.1/dist/js/bootstrap.bundle.min.js"
+        integrity="sha384-u1OknCvxWvY5kfmNBILK2hRnQC3Pr17a+RTT6rIHI7NnikvbZlHgTPOOmMi466C8"
+        crossorigin="anonymous"></script>
+
+<script src="https://cdn.jsdelivr.net/npm/popper.js@1.16.0/dist/umd/popper.min.js"
+        integrity="sha384-Q6E9RHvbIyZFJoft+2mJbHaEWldlvI9IOYy5n3zV9zzTtmI3UksdQRVvoxMfooAo" crossorigin="anonymous">
+</script>
+<script src="https://stackpath.bootstrapcdn.com/bootstrap/4.4.1/js/bootstrap.min.js"
+        integrity="sha384-wfSDF2E50Y2D1uUdj0O3uMBJnjuUD4Ih7YwaYd1iqfktj0Uod8GCExl3Og8ifwB6" crossorigin="anonymous">
+</script>
+<!-- Конец footer'а и страницы -->
+</body>
+</html>

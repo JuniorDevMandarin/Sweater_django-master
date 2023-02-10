@@ -1,0 +1,36 @@
+{% extends 'social/base.html' %}
+
+{% block content %}
+{% if request.user.is_authenticated %}
+    {% if user.id != post.author.id %}
+<h1>{{title}}</h1>
+<br/><br/>
+<h3>Delete: {{ post.title }}</h3>
+<br/>
+<div class="form-group">
+    <form method="POST">
+        {% csrf_token %}
+        <strong> Are you sure ?!</strong><br/><br/>
+        <button class="btn btn-secondary">Delete Post!</button>
+    </form>
+</div>
+    {% else %}
+Не достаточно прав доступа !!!
+    {% endif %}
+{% else %}
+Не достаточно прав доступа !!!
+{% endif %}
+
+<!--<form action="{% url 'add_page' %}" method="post" enctype="multipart/form-data">-->
+<!--    {% csrf_token %}-->
+<!--    {{form.media}}-->
+<!--&lt;!&ndash;    {{form.as_p|safe}}&ndash;&gt;-->
+<!--    <div class="form-error">{{form.non_field_errors|safe }}</div>-->
+<!--    {% for f in form %}-->
+<!--    <p><label class="form-label" for="{{f.id_for_label }}">{{f.label}}: </label> {{ f }}</p>-->
+<!--    <div class="form-control">{{ f.errors }}</div>-->
+<!--    {% endfor %}-->
+<!--    <strong>Are you sure?!</strong><br/><br/>-->
+<!--    <button class="btn btn-secondary">Delete Post !</button>-->
+<!--</form>-->
+{% endblock %}

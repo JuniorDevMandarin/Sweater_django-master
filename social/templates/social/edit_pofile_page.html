@@ -1,0 +1,24 @@
+{% extends 'social/base.html' %}
+
+{% block content %}
+{% if request.user.is_authenticated %}
+    {% if user.id == profile.user.id %}
+<h1>Edit Profile</h1>
+<form method="post" enctype="multipart/form-data">
+    {% csrf_token %}
+<!--    {{form.as_p|safe}}-->
+    <div class="form-error">{{form.non_field_errors|safe }}</div>
+    {% for f in form %}
+    <p><label class="form-label" for="{{f.id_for_label }}">{{f.label}}: </label> {{ f }}</p>
+    <div class="form-error">{{ f.errors }}</div>
+    {% endfor %}
+    <button type="submit">Update Profile Page</button>
+</form>
+{% else %}
+You are not the correct User To Edit This Page...
+
+{% endif %}
+
+{% endif %}
+
+{% endblock %}

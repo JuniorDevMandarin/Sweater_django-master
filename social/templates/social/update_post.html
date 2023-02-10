@@ -1,0 +1,47 @@
+{% extends 'social/base.html' %}
+{% block title %}Редактирование{% endblock %}
+{% block content %}
+post author {{post.author.id}}<br>
+current user {{user.id}}
+
+{% if request.user.is_authenticated %}
+    {% if request.user.id != post.author.id %}
+
+        <div class="form-group">
+            <form method="POST" enctype="multipart/form-data">
+                {% csrf_token %}
+                {{form.media}}
+        <!--            {{form.as_p|safe}}-->
+                <div class="form-error">{{form.non_field_errors|safe }}</div>
+                {% for f in form %}
+                <p><label class="form-label" for="{{f.id_for_label }}">{{f.label}}: </label> {{ f }}</p>
+                <div class="form-control">{{ f.errors }}</div>
+                {% endfor %}
+                <button type="submit">Редактировать</button>
+            </form>
+        </div>
+
+<script>
+    var name = "{{ user.id }}";
+    document.getElementById("elder").value = name;
+</script>
+    {% else %}
+        Не достаточно прав доступа !!!
+    {% endif %}
+{% else %}
+Не достаточно прав доступа !!!
+{% endif %}
+
+
+<!--<form action="{% url 'add_page' %}" method="post" enctype="multipart/form-data">-->
+<!--    {% csrf_token %}-->
+<!--    {{form.media}}-->
+<!--&lt;!&ndash;    {{form.as_p|safe}}&ndash;&gt;-->
+<!--    <div class="form-error">{{form.non_field_errors|safe }}</div>-->
+<!--    {% for f in form %}-->
+<!--    <p><label class="form-label" for="{{f.id_for_label }}">{{f.label}}: </label> {{ f }}</p>-->
+<!--    <div class="form-control">{{ f.errors }}</div>-->
+<!--    {% endfor %}-->
+<!--    <button type="submit">Редактировать</button>-->
+<!--</form>-->
+{% endblock %}
